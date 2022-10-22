@@ -1,14 +1,36 @@
+import { useContext } from "react";
+import { Image } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../../../context/AuthProvider";
 import LeftSideNav from "../LeftSideNav/LeftSideNav";
+import Button from "react-bootstrap/Button";
+
 
 const Header = () => {
+
+  const { user, logOut } = useContext(AuthContext);
+
+  const handleLogOut = () => {
+    logOut();
+  };
+
   return (
-    <Navbar collapseOnSelect className='mb-4' expand="lg" bg="light" variant="light">
+    <Navbar
+      collapseOnSelect
+      className="mb-4"
+      expand="lg"
+      bg="light"
+      variant="light"
+    >
       <Container>
-        <Navbar.Brand href="#home">Dragon News</Navbar.Brand>
+        <Link to="/">
+          <Navbar.Brand>Dragon News</Navbar.Brand>
+        </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
@@ -27,13 +49,46 @@ const Header = () => {
             </NavDropdown>
           </Nav>
           <Nav>
-            <Nav.Link href="#deets">More deets</Nav.Link>
-            <Nav.Link eventKey={2} href="#memes">
-              Dank memes
-                      </Nav.Link>
-                      <div className='d-lg-none'>
-                          <LeftSideNav></LeftSideNav>
-                      </div>
+            <div className="d-flex align-items-center">
+              {user?.uid ? (
+                <>
+                  <Nav.Link href="#deets">{user?.displayName}</Nav.Link>
+                  <Link to="/profile">
+                    {user?.photoURL ? (
+                      <Image
+                        src={user?.photoURL}
+                        style={{ height: "30px" }}
+                        roundedCircle
+                      ></Image>
+                    ) : (
+                      <FaUser></FaUser>
+                    )}
+                  </Link>
+                  <Link to="/login">
+                    <Button onClick={handleLogOut} variant="outline-primary">
+                      Log Out
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button className="me-3" variant="outline-primary">
+                      Log In
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="me-3" variant="outline-success">
+                      Register
+                    </Button>
+                  </Link>
+                  <FaUser></FaUser>
+                </>
+              )}
+            </div>
+            <div className="d-lg-none">
+              <LeftSideNav></LeftSideNav>
+            </div>
           </Nav>
         </Navbar.Collapse>
       </Container>
